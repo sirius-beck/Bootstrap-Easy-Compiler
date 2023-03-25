@@ -18,12 +18,14 @@ errors = [
     'Missing requirement: NodeJS.\n>> Download: https://nodejs.org/en/download',
     'Unable to install the library, try installing manually:\n>> npm install bootstrap',
     'Unable to install the library, try installing manually:\n>> npm install -g sass',
-    'Error compiling scss file.'
+    'Error compiling scss file.',
+    'Error installing packages, try installing manually:\n>> npm install'
 ]
 
 
 def main() -> None:
     clear_screen = sp.run('cls' if os.name == 'nt' else 'clear', shell=True)
+    check_first_run()
     install_libs()
     get_param()
     sleep(1)
@@ -40,10 +42,20 @@ def error(code: str) -> None:
     exit()
 
 
-def install_libs() -> None:
+def check_first_run() -> None:
     npm = sp.run(['npm', '--version'], shell=True, capture_output=True, text=True)
     if npm.returncode != 0:
         error(3)
+    if not os.path.exists('./node_modules'):
+        print('First run detected, installing packages...')
+        npm_install = sp.run(['npm', 'install'], shell=True)
+        if npm_install.returncode != 0:
+            error(7)
+        else:
+            print(Fore.GREEN, Style.BRIGHT, 'Modules installed.')
+
+
+def install_libs() -> None:
     bs = sp.run(['npm', 'list'], shell=True, capture_output=True, text=True)
     if 'bootstrap@' not in bs.stdout:
         print(Fore.YELLOW + Style.BRIGHT + 'Bootstrap library not found, trying to install...')
@@ -100,8 +112,7 @@ def build():
         sass_command = ['sass', theme_path, output_dir]
     scss_compile = sp.run(sass_command, shell=True, capture_output=True, text=True)
     if scss_compile.returncode != 0:
-        print(f'Output:\n{scss_compile.stdout}')
-        print(f'Error:\n{scss_compile.stderr}')
+        print(scss_compile.stderr)
         error(6)
     else:
         print(Fore.GREEN + Style.BRIGHT + f'Tema compilado com sucesso!\n>> ./themes/dist/')
