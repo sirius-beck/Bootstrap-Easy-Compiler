@@ -24,13 +24,17 @@ errors = [
 
 
 def main() -> None:
-    clear_screen = sp.run('cls' if os.name == 'nt' else 'clear', shell=True)
+    clear_screen()
     check_first_run()
     install_libs()
     get_param()
     sleep(1)
-    clear_screen = sp.run('cls' if os.name == 'nt' else 'clear', shell=True)
+    clear_screen()
     build()
+
+
+def clear_screen() -> None:
+    clear_screen = sp.run('cls' if os.name == 'nt' else 'clear', shell=True)
 
 
 def help():
@@ -80,7 +84,7 @@ def install_libs() -> None:
 def get_param() -> None:
     global theme_name, watch_mode, params
     if len(params) <= 1:
-        error(0)
+        get_inputs()
     elif len(params) > 3:
         error(1)
     else:
@@ -93,6 +97,20 @@ def get_param() -> None:
                 else:
                     print(param)
                     error(2)
+
+
+def get_inputs():
+    global theme_name, watch_mode
+    clear_screen()
+    theme_name = input('Theme name: ')
+    while theme_name == '':
+        clear_screen()
+        theme_name = input('Theme name: ')
+    watch_mode = input('Enable watch mode [Y]es [N]o (default: No): ')
+    if watch_mode.startswith('y'):
+        watch_mode = True
+    elif watch_mode.startswith('n'):
+        watch_mode = False
 
 
 def theme_exists(theme_name: str) -> bool:
