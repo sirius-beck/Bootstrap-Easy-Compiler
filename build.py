@@ -95,7 +95,6 @@ def get_param() -> None:
                 if theme_exists(f'{param}.scss'):
                     theme_name = f'{param}.scss'
                 else:
-                    print(param)
                     error(2)
 
 
@@ -106,6 +105,10 @@ def get_inputs():
     while theme_name == '':
         clear_screen()
         theme_name = input('Theme name: ')
+    if theme_exists(f'{theme_name}.scss'):
+        theme_name = f'{theme_name}.scss'
+    else:
+        error(2)
     watch_mode = input('Enable watch mode [Y]es [N]o (default: No): ')
     if watch_mode.startswith('y'):
         watch_mode = True
