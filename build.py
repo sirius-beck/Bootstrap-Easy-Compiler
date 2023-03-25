@@ -21,6 +21,7 @@ errors = [
     'Error compiling scss file.',
     'Error installing packages, try installing manually:\n>> npm install'
 ]
+direct_exec = False
 
 
 def main() -> None:
@@ -31,6 +32,9 @@ def main() -> None:
     sleep(1)
     clear_screen()
     build()
+    if direct_exec:
+        input('Press ENTER to exit...')
+        sys.exit()
 
 
 def clear_screen() -> None:
@@ -43,7 +47,7 @@ def help():
 
 def error(code: str) -> None:
     print(Fore.RED + Style.BRIGHT + f'[Error: {code}] {errors[code]}')
-    exit()
+    sys.exit()
 
 
 def check_first_run() -> None:
@@ -99,7 +103,7 @@ def get_param() -> None:
 
 
 def get_inputs():
-    global theme_name, watch_mode
+    global theme_name, watch_mode, direct_exec
     clear_screen()
     theme_name = input('Theme name: ')
     while theme_name == '':
@@ -114,6 +118,7 @@ def get_inputs():
         watch_mode = True
     elif watch_mode.startswith('n'):
         watch_mode = False
+    direct_exec = True
 
 
 def theme_exists(theme_name: str) -> bool:
