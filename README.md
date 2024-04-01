@@ -1,2 +1,1 @@
-# Bootstrap-Themes
-My personal themes for bootstrap.
+# Bootstrap Theme Compiler
