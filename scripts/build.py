@@ -22,6 +22,7 @@ errors = [
     'Error installing packages, try installing manually:\n>> npm install'
 ]
 direct_exec = False
+output_dir = '.\\dist'
 
 
 def main() -> None:
@@ -67,7 +68,7 @@ def install_libs() -> None:
     bs = sp.run(['npm', 'list'], shell=True, capture_output=True, text=True)
     if 'bootstrap@' not in bs.stdout:
         print(Fore.YELLOW + Style.BRIGHT + 'Bootstrap library not found, trying to install...')
-        bs_version = input(Fore.CYAN + Style.BRIGHT + 'Qual versão do bootstrap deseja instalar? (5.3.0-alpha1): ')
+        bs_version = input(Fore.CYAN + Style.BRIGHT + 'Which version of bootstrap do you want to install? (5.3.0-alpha1): ')
         if not bs_version:
             bs_version = '5.3.0-alpha1'
         bs = sp.run(['npm', 'install', f'bootstrap@{bs_version}'], shell=True, capture_output=True, text=True)
@@ -122,7 +123,7 @@ def get_inputs():
 
 
 def theme_exists(theme_name: str) -> bool:
-    if os.path.isfile(f'./themes/{theme_name}'):
+    if os.path.isfile(f'./src/{theme_name}'):
         return True
     else:
         return False
@@ -130,18 +131,18 @@ def theme_exists(theme_name: str) -> bool:
 
 def build():
     global theme_name, theme_path, watch_mode
-    theme_path = f'.\\themes\\{theme_name}'
-    output_dir = f'.\\themes\\dist\\{theme_name}'.replace('scss', 'css')
+    theme_path = f'.\\src\\{theme_name}'
+    output = f'{output_dir}\\{theme_name}'.replace('scss', 'css')
     if watch_mode:
-        sass_command = ['sass', '--watch', theme_path, output_dir]
+        sass_command = ['sass', '--watch', theme_path, output]
     else:
-        sass_command = ['sass', theme_path, output_dir]
+        sass_command = ['sass', theme_path, output]
     scss_compile = sp.run(sass_command, shell=True, capture_output=True, text=True)
     if scss_compile.returncode != 0:
         print(scss_compile.stderr)
         error(6)
     else:
-        print(Fore.GREEN + Style.BRIGHT + f'Tema compilado com sucesso!\n>> ./themes/dist/')
+        print(Fore.GREEN + Style.BRIGHT + f'Theme compiled successfully!\n>> {output}')
 
 
 if __name__ == '__main__':
